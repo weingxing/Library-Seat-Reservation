@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.oxygen.library.dao.SeatMapper" >
+  <resultMap id="BaseResultMap" type="com.oxygen.library.entity.Seat" >
+    <id column="sid" property="sid" jdbcType="INTEGER" />
+    <result column="lid" property="lid" jdbcType="INTEGER" />
+    <result column="position" property="position" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="available" property="available" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <resultMap id="ResultMap" type="com.oxygen.library.dto.SeatInfo" >
+    <id column="sid" property="sid" jdbcType="INTEGER" />
+    <result column="library_name" property="libraryName" jdbcType="VARCHAR" />
+    <result column="position" property="position" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="available" property="available" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    sid, lid, position, status, available
+  </sql>
+
+  <sql id="Column_List" >
+    sid, library_name, position, seat.status, available
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from seat
+    where sid = #{sid,jdbcType=INTEGER} for update
+  </select>
+
+  <select id="selectByLid" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from seat
+    where lid = #{lid,jdbcType=INTEGER} for update
+  </select>
+
+  <select id="selectAll" resultMap="ResultMap" >
+    select
+    <include refid="Column_List" />
+    from seat left join library on seat.lid=library.lid
+  </select>
+
+  <select id="search" resultMap="ResultMap" parameterType="java.lang.String">
+    select
+    <include refid="Column_List" />
+    from seat left join library on seat.lid=library.lid
+    where library_name like #{keyword,jdbcType=VARCHAR} or
+    position like #{keyword,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectSeatInfoBySid" resultMap="ResultMap" parameterType="java.lang.Integer">
+    select
+    <include refid="Column_List" />
+    from seat left join library on seat.lid=library.lid
+    where sid=#{sid, jdbcType=INTEGER} for update
+  </select>
+
+  <select id="selectAllSeat" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from seat for update
+  </select>
+
+  <select id="selectByLidAndPos" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select
+    <include refid="Base_Column_List" />
+    from seat where position=#{position,jdbcType=VARCHAR} and lid=#{lid,jdbcType=INTEGER} for update
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from seat
+    where sid = #{sid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.oxygen.library.entity.Seat" >
+    insert into seat (sid, lid, position,
+      status, available)
+    values (#{sid,jdbcType=INTEGER}, #{lid,jdbcType=INTEGER}, #{position,jdbcType=VARCHAR},
+      #{status,jdbcType=VARCHAR}, #{available,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.oxygen.library.entity.Seat" >
+    insert into seat
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="sid != null" >
+        sid,
+      </if>
+      <if test="lid != null" >
+        lid,
+      </if>
+      <if test="position != null" >
+        position,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="available != null" >
+        available,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="sid != null" >
+        #{sid,jdbcType=INTEGER},
+      </if>
+      <if test="lid != null" >
+        #{lid,jdbcType=INTEGER},
+      </if>
+      <if test="positio != null" >
+        #{position,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="available != null" >
+        #{available,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.oxygen.library.entity.Seat" >
+    update seat
+    <set >
+      <if test="lid != null" >
+        lid = #{lid,jdbcType=INTEGER},
+      </if>
+      <if test="positio != null" >
+        position = #{position,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="available != null" >
+        available = #{available,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where sid = #{sid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.oxygen.library.entity.Seat" >
+    update seat
+    set lid = #{lid,jdbcType=INTEGER},
+      position = #{position,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      available = #{available,jdbcType=VARCHAR}
+    where sid = #{sid,jdbcType=INTEGER}
+  </update>
+</mapper>

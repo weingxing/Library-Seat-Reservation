@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.oxygen.library.dao.ChooseSeatMapper" >
+  <resultMap id="BaseResultMap" type="com.oxygen.library.entity.ChooseSeat" >
+    <id column="cid" property="cid" jdbcType="INTEGER" />
+    <result column="sid" property="sid" jdbcType="INTEGER" />
+    <result column="stu_id" property="stuId" jdbcType="INTEGER" />
+    <result column="date" property="date" jdbcType="VARCHAR" />
+    <result column="hour" property="hour" jdbcType="VARCHAR" />
+    <result column="leave_num" property="leaveNum" jdbcType="VARCHAR" />
+    <result column="leave_date" property="leaveDate" jdbcType="VARCHAR" />
+    <result column="enter_date" property="enterDate" jdbcType="VARCHAR" />
+    <result column="pause" property="pause" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <resultMap id="ResultMap" type="com.oxygen.library.dto.ChooseSeatInfo" >
+    <id column="cid" property="cid" jdbcType="INTEGER" />
+    <result column="position" property="seatPos" jdbcType="VARCHAR" />
+    <result column="library_name" property="libraryName" jdbcType="VARCHAR"/>
+    <result column="stu_id" property="stuId" jdbcType="VARCHAR" />
+    <result column="sname" property="name" jdbcType="VARCHAR" />
+    <result column="date" property="date" jdbcType="VARCHAR" />
+    <result column="hour" property="hour" jdbcType="VARCHAR" />
+    <result column="leave_num" property="leaveNum" jdbcType="VARCHAR" />
+    <result column="leave_date" property="leaveDate" jdbcType="VARCHAR" />
+    <result column="enter_date" property="enterDate" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    cid, sid, stu_id, date, hour, leave_num, leave_date, enter_date, pause
+  </sql>
+
+  <sql id="Column_List" >
+    cid, position, library_name, sname, student.stu_id, date, hour, leave_num, leave_date, enter_date
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from choose_seat
+    where cid = #{cid,jdbcType=INTEGER} for update
+  </select>
+
+  <select id="selectByStuId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from choose_seat
+    where stu_id = #{id,jdbcType=INTEGER} order by cid DESC for update
+  </select>
+
+  <select id="selectAll" resultMap="ResultMap" >
+    select
+    <include refid="Column_List" />
+    from choose_seat left join student on choose_seat.stu_id=student.stu_id
+    left join seat on choose_seat.sid=seat.sid
+    left join library on library.lid=seat.lid
+    order by cid DESC
+  </select>
+
+  <select id="selectChooseSeatInfoByPrimaryKey" resultMap="ResultMap" parameterType="java.lang.Integer">
+    select
+    <include refid="Column_List" />
+    from choose_seat left join student on choose_seat.stu_id=student.stu_id
+    left join seat on choose_seat.sid=seat.sid
+    left join library on library.lid=seat.lid
+    where cid=#{cid,jdbcType=INTEGER}
+  </select>
+
+  <select id="search" resultMap="ResultMap" parameterType="java.lang.String">
+    select
+    <include refid="Column_List" />
+    from choose_seat left join student on choose_seat.stu_id=student.stu_id
+    left join seat on choose_seat.sid=seat.sid
+    left join library on library.lid=seat.lid
+    where sname like #{keyword,jdbcType=VARCHAR} or choose_seat.stu_id like #{keyword,jdbcType=VARCHAR}
+    order by cid DESC
+  </select>
+
+  <select id="selectTodayCount" resultType="java.lang.Integer" parameterType="java.lang.String">
+    select
+    count(*)
+    from choose_seat where date like #{keyword,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectToday" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select
+    <include refid="Base_Column_List" />
+    from choose_seat where date like #{keyword,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from choose_seat
+    where cid = #{cid,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insert" parameterType="com.oxygen.library.entity.ChooseSeat" >
+    insert into choose_seat (cid, sid, stu_id, 
+      date, hour, leave_num, 
+      leave_date, enter_date, pause)
+    values (#{cid,jdbcType=INTEGER}, #{sid,jdbcType=INTEGER}, #{stuId,jdbcType=INTEGER}, 
+      #{date,jdbcType=VARCHAR}, #{hour,jdbcType=VARCHAR}, #{leaveNum,jdbcType=VARCHAR}, 
+      #{leaveDate,jdbcType=VARCHAR}, #{enterDate,jdbcType=VARCHAR},
+      #{pause,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.oxygen.library.entity.ChooseSeat" >
+    insert into choose_seat
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="cid != null" >
+        cid,
+      </if>
+      <if test="sid != null" >
+        sid,
+      </if>
+      <if test="stuId != null" >
+        stu_id,
+      </if>
+      <if test="date != null" >
+        date,
+      </if>
+      <if test="hour != null" >
+        hour,
+      </if>
+      <if test="leaveNum != null" >
+        leave_num,
+      </if>
+      <if test="leaveDate != null" >
+        leave_date,
+      </if>
+      <if test="enterDate != null" >
+        enter_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="cid != null" >
+        #{cid,jdbcType=INTEGER},
+      </if>
+      <if test="sid != null" >
+        #{sid,jdbcType=INTEGER},
+      </if>
+      <if test="stuId != null" >
+        #{stuId,jdbcType=INTEGER},
+      </if>
+      <if test="date != null" >
+        #{date,jdbcType=VARCHAR},
+      </if>
+      <if test="hour != null" >
+        #{hour,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveNum != null" >
+        #{leaveNum,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveDate != null" >
+        #{leaveDate,jdbcType=VARCHAR},
+      </if>
+      <if test="enterDate != null" >
+        #{enterDate,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.oxygen.library.entity.ChooseSeat" >
+    update choose_seat
+    <set >
+      <if test="sid != null" >
+        sid = #{sid,jdbcType=INTEGER},
+      </if>
+      <if test="stuId != null" >
+        stu_id = #{stuId,jdbcType=INTEGER},
+      </if>
+      <if test="date != null" >
+        date = #{date,jdbcType=VARCHAR},
+      </if>
+      <if test="hour != null" >
+        hour = #{hour,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveNum != null" >
+        leave_num = #{leaveNum,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveDate != null" >
+        leave_date = #{leaveDate,jdbcType=VARCHAR},
+      </if>
+      <if test="enterDate != null" >
+        enter_date = #{enterDate,jdbcType=VARCHAR},
+      </if>
+      <if test="pause != null" >
+        pause = #{pause,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where cid = #{cid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.oxygen.library.entity.ChooseSeat" >
+    update choose_seat
+    set sid = #{sid,jdbcType=INTEGER},
+      stu_id = #{stuId,jdbcType=INTEGER},
+      date = #{date,jdbcType=VARCHAR},
+      hour = #{hour,jdbcType=VARCHAR},
+      leave_num = #{leaveNum,jdbcType=VARCHAR},
+      leave_date = #{leaveDate,jdbcType=VARCHAR},
+      enter_date = #{enterDate,jdbcType=VARCHAR},
+      pause = #{pause,jdbcType=VARCHAR}
+    where cid = #{cid,jdbcType=INTEGER}
+  </update>
+</mapper>

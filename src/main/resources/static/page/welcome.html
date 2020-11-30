@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="../lib/font-awesome-4.7.0/css/font-awesome.min.css" media="all">
+    <link rel="stylesheet" href="../css/public.css" media="all">
+</head>
+<style>
+    .layui-top-box {padding:40px 20px 20px 20px;color:#fff}
+    .panel {margin-bottom:17px;background-color:#fff;border:1px solid transparent;border-radius:3px;-webkit-box-shadow:0 1px 1px rgba(0,0,0,.05);box-shadow:0 1px 1px rgba(0,0,0,.05)}
+    .panel-body {padding:15px}
+    .panel-title {margin-top:0;margin-bottom:0;font-size:14px;color:inherit}
+    .label {display:inline;padding:.2em .6em .3em;font-size:75%;font-weight:700;line-height:1;color:#fff;text-align:center;white-space:nowrap;vertical-align:baseline;border-radius:.25em;margin-top: .3em;}
+    .layui-red {color:red}
+    .main_btn > p {height:40px;}
+</style>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main layui-top-box">
+        <div class="layui-row layui-col-space10">
+
+            <div class="layui-col-md3">
+                <div class="col-xs-6 col-md-3">
+                    <div class="panel layui-bg-cyan">
+                        <div class="panel-body">
+                            <div class="panel-title">
+                                <h5>预约统计</h5>
+                            </div>
+                            <div class="panel-content">
+                                <h1 id="all" class="no-margins">null</h1>
+                                <div id="all1" class="stat-percent font-bold text-gray"><i class="fa fa-commenting"></i></div>
+                                <small>当前系统预约总记录数</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-col-md3">
+                <div class="col-xs-6 col-md-3">
+                    <div class="panel layui-bg-blue">
+                        <div class="panel-body">
+                            <div class="panel-title">
+                                <h5>今日预约</h5>
+                            </div>
+                            <div class="panel-content">
+                                <h1 id="today" class="no-margins">null</h1>
+                                <div id="today1" class="stat-percent font-bold text-gray"><i class="fa fa-commenting"></i></div>
+                                <small>今日预约总记录数</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-col-md3">
+                <div class="col-xs-6 col-md-3">
+                    <div class="panel layui-bg-green">
+                        <div class="panel-body">
+                            <div class="panel-title">
+
+                                <h5>座位统计</h5>
+                            </div>
+                            <div class="panel-content">
+                                <h1 id="seat" class="no-margins">null</h1>
+                                <div id="seat1" class="stat-percent font-bold text-gray"><i class="fa fa-commenting"></i></div>
+                                <small>当前开放座位总记录数</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md3">
+                <div class="col-xs-6 col-md-3">
+                    <div class="panel layui-bg-orange">
+                        <div class="panel-body">
+                            <div class="panel-title">
+                                <h5>学生统计</h5>
+                            </div>
+                            <div class="panel-content">
+                                <h1 id="student" class="no-margins">null</h1>
+                                <div id="student1" class="stat-percent font-bold text-gray"><i class="fa fa-commenting"></i></div>
+                                <small>当前学生总记录数</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-box">
+        <div class="layui-row layui-col-space10">
+            <div class="layui-col-md12">
+                <blockquote class="layui-elem-quote main_btn">
+                    <h2>图书馆预约规则：</h2>
+                    <br/>
+                    <p>1. 每人每次仅可预约一个座位，信誉值低于60分将不可预约座位。</p>
+                    <p>2. 外出时要在小程序设置状态为暂离且离开时间不得超过90分钟，否则扣除信誉值2分。</p>
+                    <p>3. 未设置暂时离开状态的，扣除5信誉值。</p>
+                    <p>4. 被举报者扣除5信誉值。</p>
+                </blockquote>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-box">
+    </div>
+</div>
+<script src="../lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['layer'], function () {
+        var $ = layui.$;
+        $.ajax({
+            url: "/welcome",
+            method: "GET",
+            success: function (res) {
+                var data = res.content;
+                $("#all").text(data.all);
+                $("#all1")[0].innerHTML = $("#all1")[0].innerHTML + ' ' + data.all;
+                $("#student").text(data.student);
+                $("#student1")[0].innerHTML = $("#student1")[0].innerHTML + ' ' + data.student;
+                $("#seat").text(data.seat);
+                $("#seat1")[0].innerHTML = $("#seat1")[0].innerHTML + ' ' + data.seat;
+                $("#today").text(data.today);
+                $("#today1")[0].innerHTML = $("#today1")[0].innerHTML + ' ' + data.today;
+            },
+            error: function (res) {
+                console.error(res);
+            }
+        });
+    });
+</script>
+</body>
+</html>

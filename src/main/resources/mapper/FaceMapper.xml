@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.oxygen.library.dao.FaceMapper" >
+
+  <resultMap id="BaseResultMap" type="com.oxygen.library.entity.Face" >
+    <id column="stu_id" property="stuId" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.oxygen.library.entity.Face" extends="BaseResultMap" >
+    <result column="face_id" property="faceId" jdbcType="LONGVARBINARY" />
+  </resultMap>
+
+  <resultMap id="ResultMap" type="com.oxygen.library.dto.FaceDto" >
+    <id column="stu_id" property="stuId" jdbcType="INTEGER" />
+    <result column="sname" property="name" jdbcType="VARCHAR" />
+    <result column="face_id" property="faceId" jdbcType="LONGVARBINARY" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    stu_id
+  </sql>
+
+  <sql id="Blob_Column_List" >
+    face_id
+  </sql>
+
+  <sql id="Column_List" >
+    face.stu_id, face_id, sname
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from face
+    where stu_id = #{stuId,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectAll" resultMap="ResultMapWithBLOBs" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from face
+  </select>
+
+  <select id="selectAllInfo" resultMap="ResultMap" >
+    select
+    <include refid="Column_List" />
+    from face left join student on face.stu_id=student.stu_id
+  </select>
+
+  <select id="search" resultMap="ResultMap" parameterType="java.lang.String">
+    select
+    <include refid="Column_List" />
+    from face left join student on face.stu_id=student.face_id
+    where sname like #{keyword,jdbcType=VARCHAR} or
+    face.stu_id like #{keyword,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from face
+    where stu_id = #{stuId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.oxygen.library.entity.Face" >
+    insert into face (stu_id, face_id)
+    values (#{stuId,jdbcType=INTEGER}, #{faceId,jdbcType=LONGVARBINARY})
+  </insert>
+  <insert id="insertSelective" parameterType="com.oxygen.library.entity.Face" >
+    insert into face
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="stuId != null" >
+        stu_id,
+      </if>
+      <if test="faceId != null" >
+        face_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="stuId != null" >
+        #{stuId,jdbcType=INTEGER},
+      </if>
+      <if test="faceId != null" >
+        #{faceId,jdbcType=LONGVARBINARY},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.oxygen.library.entity.Face" >
+    update face
+    <set >
+      <if test="faceId != null" >
+        face_id = #{faceId,jdbcType=LONGVARBINARY},
+      </if>
+    </set>
+    where stu_id = #{stuId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.oxygen.library.entity.Face" >
+    update face
+    set face_id = #{faceId,jdbcType=LONGVARBINARY}
+    where stu_id = #{stuId,jdbcType=INTEGER}
+  </update>
+</mapper>

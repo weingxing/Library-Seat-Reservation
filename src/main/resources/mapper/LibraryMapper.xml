@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.oxygen.library.dao.LibraryMapper" >
+  <resultMap id="BaseResultMap" type="com.oxygen.library.entity.Library" >
+    <id column="lid" property="lid" jdbcType="INTEGER" />
+    <result column="library_name" property="libraryName" jdbcType="VARCHAR" />
+    <result column="seats_num" property="seatsNum" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    lid, library_name, seats_num, status
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from library
+    where lid = #{lid,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from library
+  </select>
+
+  <select id="selectByName" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select
+    <include refid="Base_Column_List" />
+    from library where library_name = #{name,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from library
+    where lid = #{lid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.oxygen.library.entity.Library" >
+    insert into library (lid, library_name, seats_num, 
+      status)
+    values (#{lid,jdbcType=INTEGER}, #{libraryName,jdbcType=VARCHAR}, #{seatsNum,jdbcType=INTEGER}, 
+      #{status,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.oxygen.library.entity.Library" >
+    insert into library
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="lid != null" >
+        lid,
+      </if>
+      <if test="libraryName != null" >
+        library_name,
+      </if>
+      <if test="seatsNum != null" >
+        seats_num,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="lid != null" >
+        #{lid,jdbcType=INTEGER},
+      </if>
+      <if test="libraryName != null" >
+        #{libraryName,jdbcType=VARCHAR},
+      </if>
+      <if test="seatsNum != null" >
+        #{seatsNum,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.oxygen.library.entity.Library" >
+    update library
+    <set >
+      <if test="libraryName != null" >
+        library_name = #{libraryName,jdbcType=VARCHAR},
+      </if>
+      <if test="seatsNum != null" >
+        seats_num = #{seatsNum,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where lid = #{lid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.oxygen.library.entity.Library" >
+    update library
+    set library_name = #{libraryName,jdbcType=VARCHAR},
+      seats_num = #{seatsNum,jdbcType=INTEGER},
+      status = #{status,jdbcType=VARCHAR}
+    where lid = #{lid,jdbcType=INTEGER}
+  </update>
+</mapper>
